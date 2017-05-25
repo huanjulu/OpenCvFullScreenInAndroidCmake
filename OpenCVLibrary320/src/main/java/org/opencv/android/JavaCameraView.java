@@ -38,6 +38,12 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     private Thread mThread;
     private boolean mStopThread;
 
+    public static int maxWidht;
+    public static int maxHeight;
+
+
+
+
     protected Camera mCamera;
     protected JavaCameraFrame[] mCameraFrame;
     private SurfaceTexture mSurfaceTexture;
@@ -66,6 +72,10 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     }
 
     protected boolean initializeCamera(int width, int height) {
+
+        maxWidht=width;
+
+        maxHeight=height;
         Log.d(TAG, "Initialize java camera");
         boolean result = true;
         synchronized (this) {
@@ -148,6 +158,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     params.setPreviewFormat(ImageFormat.NV21);
                     Log.d(TAG, "Set preview size to " + Integer.valueOf((int)frameSize.width) + "x" + Integer.valueOf((int)frameSize.height));
                     params.setPreviewSize((int)frameSize.width, (int)frameSize.height);
+//                    params.setPreviewSize(1920, 1080);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH && !android.os.Build.MODEL.equals("GT-I9100"))
                         params.setRecordingHint(true);
@@ -163,6 +174,8 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
                     mFrameWidth = params.getPreviewSize().width;
                     mFrameHeight = params.getPreviewSize().height;
+//                    mFrameWidth = params.getPreviewSize().height;
+//                    mFrameHeight = params.getPreviewSize().width;
 
                     if ((getLayoutParams().width == LayoutParams.MATCH_PARENT) && (getLayoutParams().height == LayoutParams.MATCH_PARENT))
                         mScale = Math.min(((float)height)/mFrameHeight, ((float)width)/mFrameWidth);
@@ -195,6 +208,10 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                         mCamera.setPreviewTexture(mSurfaceTexture);
                     } else
                        mCamera.setPreviewDisplay(null);
+
+
+
+
 
                     /* Finally we are ready to start the preview */
                     Log.d(TAG, "startPreview");
@@ -241,6 +258,8 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
          */
         /* First step - initialize camera connection */
         Log.d(TAG, "Connecting to camera");
+
+        Log.d(TAG,"connectCamera width"+width +"connectCamera height"+height);
         if (!initializeCamera(width, height))
             return false;
 

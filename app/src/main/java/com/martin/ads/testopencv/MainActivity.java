@@ -14,6 +14,7 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -25,6 +26,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private Mat                    mRgba;
     private Mat                    mIntermediateMat;
     private Mat                    mGray;
+    private Mat                    mRgbT;
 
     private CameraBridgeViewBase   mOpenCvCameraView;
 
@@ -83,8 +85,12 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
+        Log.d("CameraBridge","onCameraViewStarted width"+width+"height"+height);
+        mRgbT=new Mat(width, height, CvType.CV_8UC4);
+
         mIntermediateMat = new Mat(height, width, CvType.CV_8UC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
+
     }
 
     public void onCameraViewStopped() {
@@ -96,8 +102,16 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
-        nativeProcessFrame(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
-        return mRgba;
+        Log.d("CameraBridge",   "rows"+mRgba.rows()+"cols"+mRgba.cols());
+
+//        Mat mRgbaT = mRgba.t();
+//        Core.flip(mRgba.t(), mRgbaT, 1);
+//        Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
+//        return mRgbaT;
+//        nativeProcessFrame(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
+
+        Core.flip(mRgba.t(), mRgbT, 1);
+        return mRgbT;
     }
 
     public native String stringFromJNI();
